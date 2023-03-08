@@ -26,7 +26,6 @@ from usr.settings_loc import LocConfig
 #from usr.settings_alicloud import AliCloudConfig
 #from usr.settings_queccloud import QuecCloudConfig
 #from usr.settings_jtt808 import JTT808Config
-from usr.settings_mqtt import MqttConfig
 from usr.settings_user import UserConfig
 
 
@@ -52,7 +51,7 @@ class Settings(Singleton):
         try:
             self.current_settings["sys"] = {k: v for k, v in SYSConfig.__dict__.items() if not k.startswith("_")}
 
-            self.CloudSet=2
+            #self.CloudSet=2
             # CloudConfig init
             #if self.CloudSet == SYSConfig._cloud.AliYun:
             #    self.current_settings["cloud"] = {k: v for k, v in AliCloudConfig.__dict__.items() if not k.startswith("_")}
@@ -60,11 +59,10 @@ class Settings(Singleton):
             #    self.current_settings["cloud"] = {k: v for k, v in QuecCloudConfig.__dict__.items() if not k.startswith("_")}
             #elif self.CloudSet == SYSConfig._cloud.JTT808:
             #    self.current_settings["cloud"] = {k: v for k, v in JTT808Config.__dict__.items() if not k.startswith("_")}
-            #el
-            if self.CloudSet == SYSConfig._cloud.customization:
-                self.current_settings["cloud"] = {k: v for k, v in MqttConfig.__dict__.items() if not k.startswith("_")}
-            else:
-                self.current_settings["cloud"] = {}
+            #elif self.CloudSet == SYSConfig._cloud.customization:
+            #    self.current_settings["cloud"] = {}
+            #else:
+            #    self.current_settings["cloud"] = {}
 
             # LocConfig init
             if self.current_settings["sys"]["base_cfg"]["LocConfig"]:
