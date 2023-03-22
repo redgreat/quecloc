@@ -27,6 +27,7 @@ from usr.modules.mpower import LowEnergyManage
 from usr.modules.remote import RemotePublish, RemoteSubscribe
 #from usr.modules.aliyunIot import AliYunIot, AliObjectModel
 #from usr.modules.quecthing import QuecThing, QuecObjectModel
+from usr.modules.mqtt import SyoMqtt, MqttObjectModel
 from usr.settings import PROJECT_NAME, PROJECT_VERSION, \
     DEVICE_FIRMWARE_NAME, DEVICE_FIRMWARE_VERSION, settings#, SYSConfig
 #from usr.settings_sys import SYSConfig
@@ -142,51 +143,21 @@ def tracker():
 
     # Cloud initialization
     cloud_init_params = current_settings["cloud"]
-    if current_settings["sys"]["cloud"] & SYSConfig._cloud.quecIot:
-        cloud = Mqtt(
-            cloud_init_params["PK"],
-            cloud_init_params["PS"],
-            cloud_init_params["DK"],
-            cloud_init_params["DS"],
-            cloud_init_params["SERVER"],
+    if current_settings["sys"]["cloud"] == 6:
+        cloud = SyoMqtt(
+            cloud_init_params["host"],
+            cloud_init_params["port"],
+            cloud_init_params["username"],
+            cloud_init_params["password"],
+            cloud_init_params["topic"],
+            cloud_init_params["keepalive"],
             mcu_name=PROJECT_NAME,
             mcu_version=PROJECT_VERSION
         )
         # Cloud object model init
-        cloud_om = QuecObjectModel()
+        cloud_om = MqttObjectModel()
         cloud.set_object_model(cloud_om)
     
-    #if current_settings["sys"]["cloud"] & SYSConfig._cloud.quecIot:
-    #    cloud = QuecThing(
-    #        cloud_init_params["PK"],
-    #        cloud_init_params["PS"],
-    #        cloud_init_params["DK"],
-    #        cloud_init_params["DS"],
-    #        cloud_init_params["SERVER"],
-    #        mcu_name=PROJECT_NAME,
-    #        mcu_version=PROJECT_VERSION
-    #    )
-    #    # Cloud object model init
-    #    cloud_om = QuecObjectModel()
-    #    cloud.set_object_model(cloud_om)
-    #elif current_settings["sys"]["cloud"] & SYSConfig._cloud.AliYun:
-    #    client_id = cloud_init_params["client_id"] if cloud_init_params.get("client_id") else modem.getDevImei()
-    #    cloud = AliYunIot(
-    #        cloud_init_params["PK"],
-    #        cloud_init_params["PS"],
-    #        cloud_init_params["DK"],
-    #        cloud_init_params["DS"],
-    #        cloud_init_params["SERVER"],
-    #        client_id,
-    #        burning_method=cloud_init_params["burning_method"],
-    #        mcu_name=PROJECT_NAME,
-    #        mcu_version=PROJECT_VERSION,
-    #        firmware_name=DEVICE_FIRMWARE_NAME,
-    #        firmware_version=DEVICE_FIRMWARE_VERSION
-    #    )
-    #    # Cloud object model init
-    #    cloud_om = AliObjectModel()
-    #    cloud.set_object_model(cloud_om)
     else:
         raise TypeError("Settings cloud[%s] is not support." % current_settings["sys"]["cloud"])
 

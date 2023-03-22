@@ -26,6 +26,7 @@ from usr.settings_loc import LocConfig
 #from usr.settings_alicloud import AliCloudConfig
 #from usr.settings_queccloud import QuecCloudConfig
 #from usr.settings_jtt808 import JTT808Config
+from usr.settings_mqtt import MqttConfig
 from usr.settings_user import UserConfig
 
 
@@ -49,20 +50,14 @@ class Settings(Singleton):
 
     def __init_config(self):
         try:
+            #SYSConfig
             self.current_settings["sys"] = {k: v for k, v in SYSConfig.__dict__.items() if not k.startswith("_")}
 
-            #self.CloudSet=2
             # CloudConfig init
-            #if self.CloudSet == SYSConfig._cloud.AliYun:
-            #    self.current_settings["cloud"] = {k: v for k, v in AliCloudConfig.__dict__.items() if not k.startswith("_")}
-            #elif self.CloudSet == SYSConfig._cloud.quecIot:
-            #    self.current_settings["cloud"] = {k: v for k, v in QuecCloudConfig.__dict__.items() if not k.startswith("_")}
-            #elif self.CloudSet == SYSConfig._cloud.JTT808:
-            #    self.current_settings["cloud"] = {k: v for k, v in JTT808Config.__dict__.items() if not k.startswith("_")}
-            #elif self.CloudSet == SYSConfig._cloud.customization:
-            #    self.current_settings["cloud"] = {}
-            #else:
-            #    self.current_settings["cloud"] = {}
+            if self.CloudSet == SYSConfig._cloud.Mqtt:
+                self.current_settings["cloud"] = {k: v for k, v in MqttConfig.__dict__.items() if not k.startswith("_")}    
+            else:
+                self.current_settings["cloud"] = {}
 
             # LocConfig init
             if self.current_settings["sys"]["base_cfg"]["LocConfig"]:
@@ -73,6 +68,7 @@ class Settings(Singleton):
                 self.current_settings["user_cfg"] = {k: v for k, v in UserConfig.__dict__.items() if not k.startswith("_")}
                 self.current_settings["user_cfg"]["ota_status"]["sys_current_version"] = DEVICE_FIRMWARE_VERSION
                 self.current_settings["user_cfg"]["ota_status"]["app_current_version"] = PROJECT_VERSION
+            
             return True
         except:
             return False

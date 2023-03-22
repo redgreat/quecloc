@@ -20,13 +20,14 @@ class SYSConfig(object):
         quecIot = 0x1
         AliYun = 0x2
         JTT808 = 0x4
+        Mqtt = 0x6
         customization = 0x8
 
     debug = True
 
     log_level = "DEBUG"
 
-    cloud = _cloud.customization
+    cloud = _cloud.Mqtt
 
     checknet_timeout = 60
 

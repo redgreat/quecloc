@@ -61,7 +61,7 @@ class Settings(Singleton):
             #elif self.CloudSet == SYSConfig._cloud.JTT808:
             #    self.current_settings["cloud"] = {k: v for k, v in JTT808Config.__dict__.items() if not k.startswith("_")}
             #el
-            if self.CloudSet == SYSConfig._cloud.customization:
+            if self.CloudSet == SYSConfig._cloud.Mqtt:
                 self.current_settings["cloud"] = {k: v for k, v in MqttConfig.__dict__.items() if not k.startswith("_")}
             else:
                 self.current_settings["cloud"] = {}
