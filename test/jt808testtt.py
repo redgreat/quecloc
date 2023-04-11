@@ -554,32 +554,38 @@ class JT808Parser(object):
             buffer = buffer[:-2]
         if len(buffer) == 0 or len(buffer) / 2 == 1:
             self.LOGI("长度不应为0 或 单数")
+            print('1',buffer)
             return None
-
         if buffer[0] != '0' and buffer[0] != '8':
             self.LOGI("msgid是0或8开头")
+            print('2',buffer)
             return None
 
         try:
             buffer = ToBytearray(buffer)
             buffer = Unescape(buffer)
+            print('3',buffer)
         except Exception as e:
             self.LOGE("Reverse>>" + str(e) + '|' + str(data))
+            print('4',buffer)
             buffer = None
         else:
             if self.lastData == buffer:
                 self.LOGI("self.lastData == buffer")
+                print('5',buffer)
                 return None
             self.lastData = buffer
             buffer = buffer[:-1]  # 跳过校验码
 
         if None == buffer:
             self.LOGI("None == buffer")
+            print('6',buffer)
             return None
 
         offset = 0
         try:
             header = self.ParseHeader(buffer)
+            print('1',ParseHeader)
         except Exception as e:
             self.LOGE(str(e))
             header = None
@@ -624,13 +630,15 @@ class JT808Parser(object):
             pass
         else:
             self.LOGE("Type Error")
+            print(("Type Error"))
             return None
 
         retList = []
         for data in dataList:
             data = data.strip()
             try:
-                retsult = self.ParseData(data)
+                retsult = self.ParseData(str(data))
+                print(retsult)
             except Exception as e:
                 self.LOGE("%s>>%s" % (str(e), data))
                 continue
@@ -798,14 +806,17 @@ class JT808Parser(object):
         self.LOGD(str(data))
         return data
 
-    def pre_handle(self,datas):
+class Jt808Handler(asyncore.dispatcher_with_send):
+    buffer_data={}
+    def pre_handle(self, datas):
         data_handled=[]
+        #print(datas)
         if datas.startswith(b'~') and datas.endswith(b'~'):
             datas=datas.split(b'~')
             datas.pop()
             for data in datas:
                 if data!=b'':
-                    data=b'~'+data+b'~'
+                    data=bytes(b'~'+data+b'~')
                     data_handled.append(data)
             return data_handled
         else:
@@ -814,13 +825,17 @@ class JT808Parser(object):
         #serv_receive=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         data = self.recv(8192)
         # print(data)
-        data = self.pre_handle(data)
+        dataList = self.pre_handle(data)
         if data!='buffer_data':
-            if len(data) == 0:
+            if len(dataList) == 0:
                 return
             else:
-                result = self.ParseMultiLog(data)
-                print(result)
+                #print(dataList)
+                #print(type(dataList))
+                #print(type(dataList[0]))
+                JT808 = JT808Parser()
+                result = JT808.ParseMultiLog(dataList)
+                #print(result)
 
 # 设备链接监听
 class Jt808Server(asyncore.dispatcher):
