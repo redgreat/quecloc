@@ -12,12 +12,18 @@ from msg_send import MsgHandler
 class Jt808Protocol(asyncio.Protocol):
     def __init__(self):
         self.peer_addr = None  # 存储客户端IP和端口
+        self.buffer_data = {}  # 存储设备ID和对应的连接
+        self.mysql_pool = DataHandler.mysql_pool_create()  # 创建数据库连接池
+        self.mysql_save = DataHandler.mysql_save           # 创建消息存储实例
+        self.msg_send = MsgHandler().send_multi_wx808_msg  # 创建消息送实例
+
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
         ip = peername[0]
         port = peername[1]
         print(f'Connected by {ip}:{port}')
-        # TOTO 将连接信息写入配置数据库
+        self.peer_addr = peername
+        # TODO 将连接信息写入配置数据库
     def data_received(self, data):
         buffer_data = {}
         data_handled = []
@@ -96,9 +102,7 @@ class Jt808Protocol(asyncio.Protocol):
         loop.create_connection(Jt808Protocol, HOST, PORT)
 
 if __name__ == '__main__':
-    #mysql_pool = DataHandler.mysql_pool_create()
-    #mysql_save = DataHandler.mysql_save
-    #msg_send = MsgHandler().send_multi_wx808_msg
+
     loop = asyncio.get_event_loop()
     server = loop.run_until_complete(asyncio.start_server(Jt808Protocol, '0.0.0.0', 8993))
     print('Server started!')
