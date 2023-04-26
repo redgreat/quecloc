@@ -22,6 +22,14 @@ mysql_database=db_config.get(mysql_conn_name, 'database')
 mysql_ssl_path=db_config.get(mysql_conn_name, 'ssl_path')
 mysql_charset=db_config.get(mysql_conn_name, 'charset')
 
+td_conn_name='tdengine'
+td_host=db_config.get(td_conn_name, 'host')
+td_port=int(db_config.get(td_conn_name, 'port'))
+td_username=db_config.get(td_conn_name, 'username')
+td_password=db_config.get(td_conn_name, 'password')
+td_database=db_config.get(td_conn_name, 'database')
+td_charset=db_config.get(td_conn_name, 'charset')
+
 class DataHandler:
     def mysql_pool_create():
         global mysql_pool
